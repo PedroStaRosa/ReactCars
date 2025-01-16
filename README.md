@@ -1,12 +1,27 @@
-# React + TypeScript + Vite
+# ReactCarProject
 
-Crie um arquivo na raiz " .env.local " e preencha com a credencial do FIREBASE, exemplo:
-VITE_FIREBASE_API_KEY=your-api-key
-VITE_FIREBASE_AUTH_DOMAIN=your-auth-domain
-VITE_FIREBASE_PROJECT_ID=your-project-id
-VITE_FIREBASE_STORAGE_BUCKET=your-storage-bucket
-VITE_FIREBASE_MESSAGING_SENDER_ID=your-messaging-sender-id
-VITE_FIREBASE_APP_ID=your-app-id
+_O principal objetivo deste projeto é auxiliar na divulgação dos carros que um amigo está vendendo. Além disso, o projeto servirá para enriquecer meu portfólio profissional e me proporcionar a oportunidade de estudar e aplicar as tecnologias envolvidas em seu desenvolvimento._
+
+Create a file at the root " .env.local " and fill it with the FIREBASE credential, example:
+
+- VITE_FIREBASE_API_KEY=your-api-key
+- VITE_FIREBASE_AUTH_DOMAIN=your-auth-domain
+- VITE_FIREBASE_PROJECT_ID=your-project-id
+- VITE_FIREBASE_STORAGE_BUCKET=your-storage-bucket
+- VITE_FIREBASE_MESSAGING_SENDER_ID=your-messaging-sender-id
+- VITE_FIREBASE_APP_ID=your-app-id
+
+First, install the dependencies:
+
+```
+npm install
+```
+
+Secound, run the development server:
+
+```
+npm run dev
+```
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
