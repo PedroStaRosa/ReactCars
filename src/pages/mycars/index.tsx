@@ -9,6 +9,7 @@ import { UserContext } from "@/contexts/userContext";
 import {
   deleteCarService,
   fetchMyCarsService,
+  updatePausedOrReactivateAdService,
   updateCarSellingService,
 } from "@/services/car.services";
 import { CarType } from "@/types/Car";
@@ -91,10 +92,33 @@ const MycarsPage = () => {
   const handleSoldCar = async (carId: string) => {
     try {
       if (carId && userAuth) {
-        await updateCarSellingService(carId);
-        const carListUpdated = await fetchMyCarsService(userAuth.uid);
-        setCars(carListUpdated);
-        toast.success("Parabéns veículo vendido com sucesso!");
+        const car = cars.find((car) => car.id === carId);
+        if (car) {
+          await updateCarSellingService(carId);
+          const carListUpdated = await fetchMyCarsService(userAuth.uid);
+          setCars(carListUpdated);
+          toast.success("Parabéns veículo vendido com sucesso!");
+        }
+      }
+    } catch (error) {
+      toast.error("Houve uma erro, tente novamente mais tarde!");
+    }
+  };
+
+  const handlePausedAd = async (carId: string) => {
+    try {
+      if (carId && userAuth) {
+        const car = cars.find((car) => car.id === carId);
+        if (car) {
+          await updatePausedOrReactivateAdService(car);
+          const carListUpdated = await fetchMyCarsService(userAuth.uid);
+          setCars(carListUpdated);
+          if (car.isPaused) {
+            toast.success("Anúncio reativado com sucesso!");
+          } else {
+            toast.success("Anúncio pausado com sucesso!");
+          }
+        }
       }
     } catch (error) {
       toast.error("Houve uma erro, tente novamente mais tarde!");
@@ -176,6 +200,7 @@ const MycarsPage = () => {
             car={car}
             onDeleteCar={handleDeleteCar}
             onSoldCar={handleSoldCar}
+            onPausedAd={handlePausedAd}
           />
         ))}
       </section>

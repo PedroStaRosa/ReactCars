@@ -39,6 +39,7 @@ export const getCars_Service = async (filter: FilterType) => {
   try {
     const carRef = collection(db, "cars");
     conditions.push(where("sold", "==", false));
+    conditions.push(where("isPaused", "==", false));
 
     if (filter.brand) {
       console.log(filter.brand);
@@ -248,6 +249,21 @@ export const updateCarSellingService = async (CarId: string) => {
       sold: true,
     });
 
+    return carSold;
+  } catch (error) {
+    return null;
+  }
+};
+
+export const updatePausedOrReactivateAdService = async (car: CarType) => {
+  if (!car) {
+    return;
+  }
+  try {
+    const carRef = doc(db, "cars", car.id);
+    const carSold = await updateDoc(carRef, {
+      isPaused: !car.isPaused,
+    });
     return carSold;
   } catch (error) {
     return null;
