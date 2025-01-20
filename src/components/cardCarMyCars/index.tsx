@@ -1,4 +1,4 @@
-import { FaMapMarkedAlt, FaPause } from "react-icons/fa";
+import { FaMapMarkedAlt, FaPause, FaPlay } from "react-icons/fa";
 import { Card, CardContent, CardFooter, CardTitle } from "../ui/card";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -29,9 +29,15 @@ interface CardCarProps {
   car: CarType;
   onDeleteCar: (car: CarType) => void;
   onSoldCar: (carId: string) => void;
+  onPausedAd: (carId: string) => void;
 }
 
-const CardCarMyCars = ({ car, onDeleteCar, onSoldCar }: CardCarProps) => {
+const CardCarMyCars = ({
+  car,
+  onDeleteCar,
+  onSoldCar,
+  onPausedAd,
+}: CardCarProps) => {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(1);
   const [imageLoaded, setImageLoaded] = useState<string[]>([]);
@@ -73,15 +79,15 @@ const CardCarMyCars = ({ car, onDeleteCar, onSoldCar }: CardCarProps) => {
     }
   };
 
-  const handlePauseCar = async (car: CarType) => {
+  const handlePausedAdCar = async (carId: string) => {
     setLoading(true); // Start loading
     try {
-      console.log(car);
+      await onPausedAd(carId);
     } catch (error) {
       console.error("Error selling a car:", error);
     } finally {
       setLoading(false);
-      setIsOpenDialogSoldCar(false);
+      setOpenDialogPauseSale(false);
     }
   };
 
@@ -184,13 +190,13 @@ const CardCarMyCars = ({ car, onDeleteCar, onSoldCar }: CardCarProps) => {
         <CardFooter
           className={`flex items-center justify-center rounded-b-xl text-white font-semibold  ${
             car.sold ? "bg-red-500" : ""
-          }`}
+          } ${car.isPaused ? "bg-hover" : ""}`}
         >
           {car.sold ? (
             <span className="h-11 flex justify-center items-center">
               Vendido
             </span>
-          ) : (
+          ) : !car.isPaused ? (
             <div className="flex gap-2">
               <Button
                 className="text-xs my-1 bg-green-500"
@@ -199,9 +205,6 @@ const CardCarMyCars = ({ car, onDeleteCar, onSoldCar }: CardCarProps) => {
                 <FaCircleCheck size={18} />
                 Vender
               </Button>
-              {/* FEATURE IN PROGRESS
-              functionality to stoped sell a car, change field "onSale" to false 
-              Verificar se esta pausado e mudar o botão para ativar o anuncio ou visse versa*/}
               <Button
                 className="text-xs my-1 bg-primary"
                 onClick={() => setOpenDialogPauseSale(true)}
@@ -209,8 +212,17 @@ const CardCarMyCars = ({ car, onDeleteCar, onSoldCar }: CardCarProps) => {
                 <FaPause size={18} />
                 <span className="hidden md:block">Pausar Anúncio</span>
               </Button>
-              {/* FEATURE IN PROGRESS */}
             </div>
+          ) : (
+            <>
+              <span
+                onClick={() => setOpenDialogPauseSale(true)}
+                className="w-full cursor-pointer h-11 text-center flex justify-center items-center gap-3"
+              >
+                Pausado
+                <FaPlay size={18} className="" />
+              </span>
+            </>
           )}
         </CardFooter>
       </Card>
@@ -317,7 +329,13 @@ const CardCarMyCars = ({ car, onDeleteCar, onSoldCar }: CardCarProps) => {
         >
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Deseja realmente pausar seu anúncio?</DialogTitle>
+              {car.isPaused ? (
+                <DialogTitle>
+                  Deseja realmente reativar seu anúncio?
+                </DialogTitle>
+              ) : (
+                <DialogTitle>Deseja realmente pausar seu anúncio?</DialogTitle>
+              )}
               {/* <DialogDescription className="bg-secondary-foreground text-white font-medium p-1 rounded-lg">
                 Essa ação não pode ter revertida, pense com cuidado.
               </DialogDescription> */}
@@ -349,10 +367,14 @@ const CardCarMyCars = ({ car, onDeleteCar, onSoldCar }: CardCarProps) => {
               </DialogClose>
               <Button
                 className="w-full"
-                onClick={() => handlePauseCar(car)}
+                onClick={() => handlePausedAdCar(car.id)}
                 disabled={loading}
               >
-                {loading ? "Deletando..." : "Sim"}
+                {loading
+                  ? car.isPaused
+                    ? "Reativando"
+                    : "Pausando..."
+                  : "Sim"}
               </Button>
             </DialogFooter>
           </DialogContent>
